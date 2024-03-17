@@ -1,5 +1,4 @@
 import json
-
 from flask import Flask, request
 import pandas as pd
 import csv
@@ -55,7 +54,7 @@ def get_pokemon():
 
 
 if __name__ == "__main__":
-    path = r'C:\Users\USER\PycharmProjects\Mid_Project\Mid_Project\Mid_Project\Docs\Pokemon.csv'
+    path = r'Mid_Project/Docs/Pokemon.csv'
     pokemon_df = pd.read_csv(path)
 
     pokemon_df = pokemon_df.drop_duplicates()
