@@ -1,6 +1,6 @@
 # Mid_Project
 
-My prjoct will be call Pokedex.
+My project will be called Pokedex.
 
-Every pokemon trainer (cliet) needs his pokedex.
+Every Pokemon trainer (client) needs his Pokedex.
 
