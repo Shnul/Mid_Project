@@ -9,7 +9,7 @@ class Pokemon:
         self.id = id
         self.name = name
         self.type1 = type1
-        self.type2 = type2 or 'None'  # Handle missing Type 2 as 'None'
+        self.type2 = type2 or 'None'
         self.total = total
         self.hp = hp
         self.attack = attack
@@ -39,9 +39,9 @@ if __name__ == "__main__":
         # Data cleaning and preparation
         pokemon_df.drop_duplicates(inplace=True)
         pokemon_df.sort_values(by='Name', ascending=True, inplace=True)
-        pokemon_df['Type 2'] = pokemon_df['Type 2'].fillna('None')  # Fill NaN for 'Type 2'
-        pokemon_df['Legendary'] = pokemon_df['Legendary'].fillna(False)  # Fill NaN with False
-        pokemon_df['Legendary'] = pokemon_df['Legendary'].astype(bool)  # Convert to boolean
+        pokemon_df['Type 2'] = pokemon_df['Type 2'].fillna('None')
+        pokemon_df['Legendary'] = pokemon_df['Legendary'].fillna(False)
+        pokemon_df['Legendary'] = pokemon_df['Legendary'].astype(bool)
 
         # Create Pokemon objects
         for _, row in pokemon_df.iterrows():
