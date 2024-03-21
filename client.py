@@ -28,7 +28,6 @@ def display_pokemon_data(pokemon_data):
 
 if __name__ == "__main__":
     while True:
-        # Prompt for Pokémon name
         pokemon_name = input("\nEnter the name of the Pokémon you're interested in (or type 'rocket' to exit): ").strip()
         if pokemon_name.lower() == 'rocket':
             print("Team Rocket is blasting off again!")
