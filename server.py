@@ -1,17 +1,15 @@
-import json
-from flask import Flask, request
+from flask import Flask, jsonify, request
 import pandas as pd
-import csv
 
 app = Flask(__name__)
 pokemon_objects = []
 
 class Pokemon:
-    def __init__(self, id, name, type1, type2, total, hp, attack, defense, sp_atk, sp_def, speed, generation, legendary, image_path=None):
+    def __init__(self, id, name, type1, type2, total, hp, attack, defense, sp_atk, sp_def, speed, generation, legendary):
         self.id = id
         self.name = name
         self.type1 = type1
-        self.type2 = type2 if type2 else 'None'
+        self.type2 = type2 or 'None'  # Handle missing Type 2 as 'None'
         self.total = total
         self.hp = hp
         self.attack = attack
@@ -21,63 +19,48 @@ class Pokemon:
         self.speed = speed
         self.generation = generation
         self.legendary = legendary
-    def __repr__(self):
-        return f"Pokemon({self.name}, Type: {self.type1}/{self.type2})"
 
     def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'type1': self.type1,
-            'type2': self.type2,
-            'total': self.total,
-            'hp': self.hp,
-            'attack': self.attack,
-            'defense': self.defense,
-            'sp_atk': self.sp_atk,
-            'sp_def': self.sp_def,
-            'speed': self.speed,
-            'generation': self.generation,
-            'legendary': self.legendary
-        }
+        return vars(self)
 
 @app.route('/get_pokemon', methods=['GET'])
 def get_pokemon():
-    # search = request.data
-    args = request.args
-    pokemon_name = args['name']
-    for item in pokemon_objects:
-        if item.name.lower() == pokemon_name:
-            return json.dumps(item.to_dict())
-
-    return('false')
-
+    pokemon_name = request.args.get('name', default="", type=str).lower()
+    for pokemon in pokemon_objects:
+        if pokemon.name.lower() == pokemon_name:
+            return jsonify(pokemon.to_dict())
+    return jsonify({'error': 'Pokémon not found'}), 404
 
 if __name__ == "__main__":
-    path = r'Mid_Project/Docs/Pokemon.csv'
-    pokemon_df = pd.read_csv(path)
+    try:
+        path = r'venv/Docs/Pokemon.csv'
+        pokemon_df = pd.read_csv(path)
 
-    pokemon_df = pokemon_df.drop_duplicates()
-    pokemon_df = pokemon_df.sort_values(by='#', ascending=True)
-    pokemon_df = pokemon_df.reset_index(drop=True)
+        # Data cleaning and preparation
+        pokemon_df.drop_duplicates(inplace=True)
+        pokemon_df.sort_values(by='Name', ascending=True, inplace=True)
+        pokemon_df['Type 2'] = pokemon_df['Type 2'].fillna('None')  # Fill NaN for 'Type 2'
+        pokemon_df['Legendary'] = pokemon_df['Legendary'].fillna(False)  # Fill NaN with False
+        pokemon_df['Legendary'] = pokemon_df['Legendary'].astype(bool)  # Convert to boolean
 
+        # Create Pokemon objects
+        for _, row in pokemon_df.iterrows():
+            pokemon_objects.append(Pokemon(
+                id=row['#'],
+                name=row['Name'],
+                type1=row['Type 1'],
+                type2=row['Type 2'],
+                total=row['Total'],
+                hp=row['HP'],
+                attack=row['Attack'],
+                defense=row['Defense'],
+                sp_atk=row['Sp. Atk'],
+                sp_def=row['Sp. Def'],
+                speed=row['Speed'],
+                generation=row['Generation'],
+                legendary=row['Legendary']
+            ))
 
-    # Iterate over each row in the DataFrame and create a Pokemon object
-    for index, row in pokemon_df.iterrows():
-        pokemon = Pokemon(
-            id=row['#'],
-            name=row['Name'],
-            type1=row['Type 1'],
-            type2=row['Type 2'] if pd.notnull(row['Type 2']) else 'None',  # Handling potential NaN values
-            total=row['Total'],
-            hp=row['HP'],
-            attack=row['Attack'],
-            defense=row['Defense'],
-            sp_atk=row['Sp. Atk'],
-            sp_def=row['Sp. Def'],
-            speed=row['Speed'],
-            generation=row['Generation'],
-            legendary=row['Legendary']
-        )
-        pokemon_objects.append(pokemon)
-    app.run()
+        app.run(debug=True)
+    except Exception as e:
+        print(f"Failed to load and process the Pokemon CSV: {e}")
