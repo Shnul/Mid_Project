@@ -33,17 +33,15 @@ def get_pokemon():
 
 if __name__ == "__main__":
     try:
-        path = r'venv/Docs/Pokemon.csv'
+        path = r'C:\Users\USER\PycharmProjects\Mid_Project\Mid_Project\venv\Docs\Pokemon.csv'
         pokemon_df = pd.read_csv(path)
 
-        # Data cleaning and preparation
         pokemon_df.drop_duplicates(inplace=True)
-        pokemon_df.sort_values(by='Name', ascending=True, inplace=True)
+        pokemon_df.sort_values(by='#', ascending=True, inplace=True)
         pokemon_df['Type 2'] = pokemon_df['Type 2'].fillna('None')
         pokemon_df['Legendary'] = pokemon_df['Legendary'].fillna(False)
         pokemon_df['Legendary'] = pokemon_df['Legendary'].astype(bool)
 
-        # Create Pokemon objects
         for _, row in pokemon_df.iterrows():
             pokemon_objects.append(Pokemon(
                 id=row['#'],
