@@ -50,7 +50,7 @@ def display_pokemon_data(pokemon_data):
 if __name__ == "__main__":
     while True:
         # Prompt for Pokémon name
-        user_input = input("\nEnter your Pokémon names separated by '|' (or type 'exit' to quit): ").strip()
+        user_input = input("\nEnter your Pokémon names separated by '|' (or type 'team rocket' to quit): ").strip()
         if user_input.lower() == 'team rocket':
             print("Exiting the program.")
             break
